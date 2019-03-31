@@ -1,6 +1,6 @@
-# proxychains-conf-generator
+# proxychains-config-generator
 
-A tool to generate configurations for the proxychains tool.
+A tool to generate configurations for the [proxychains](https://github.com/haad/proxychains) tool.
 
 ## Usage
 
@@ -48,3 +48,5 @@ optional arguments:
 ```
 
 ## Issues
+
+- Fix up `InternalConfiguration.save_config()`

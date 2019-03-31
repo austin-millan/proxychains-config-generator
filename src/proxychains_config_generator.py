@@ -3,7 +3,6 @@
 # Internal
 from argparse import ArgumentParser
 import json
-from collections import namedtuple
 import os
 import sys
 
