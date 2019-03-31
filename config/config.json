@@ -1,0 +1,113 @@
+{
+    "chain_type": {
+        "short": "t",
+        "nargs": 1,
+        "type": "integer",
+        "description": "The option below identifies how the ProxyList is treated.",
+        "default": "strict_chain",
+        "options": {
+            "dynamic_chain": {
+                "type": "string",
+                "description": "Each connection will be done via chained proxies"
+            },
+            "strict_chain": {
+                "type": "string",
+                "description": "Each connection will be done via chained proxies"
+            },
+            "random_chain": {
+                "type": "string",
+                "description": "Each connection will be done via random proxy"
+            }
+        }
+    },
+    "chain_len": {
+        "short": "l",
+        "nargs": null,
+        "type": "integer",
+        "description": "Make sense only if random_chain",
+        "default": 2
+    },
+    "quiet_mode": {
+        "short": "q",
+        "type": "bool",
+        "description": "Quiet mode (no output from library)",
+        "default": null
+    },
+    "proxy_dns": {
+        "short": "p",
+        "type": "bool",
+        "description": "Proxy DNS requests - no leak for DNS data",
+        "default": true
+    },
+    "remote_dns_subnet": {
+        "short": "r",
+        "nargs": 1,
+        "type": "integer",
+        "description": "set the class A subnet number to usefor use of the internal remote DNS mapping",
+        "default": 224
+    },
+    "tcp_read_time_out": {
+        "short": "b",
+        "nargs": 1,
+        "type": "integer",
+        "description": "Some timeouts in milliseconds",
+        "default": 15000
+    },
+    "tcp_connect_time_out": {
+        "short": "c",
+        "nargs": 1,
+        "type": "integer",
+        "description": "Some timeouts in milliseconds",
+        "default": 8000
+    },
+    "loopback_address_range": {
+        "short": "a",
+        "nargs": 1,
+        "type": "string",
+        "description": "By default enable localnet for loopback address ranges",
+        "default": "localnet 127.0.0.0/255.0.0.0"
+    },
+    "proxy_list": {
+        "short": "e",
+        "description": "proxy types: http, socks4, socks5. Defaults to 'tor'",
+        "type": "string",
+        "default": "[ProxyList]\nsocks4 127.0.0.1 9050",
+        "format": {
+            "protocol": {
+                "type": "string",
+                "description": "Protocol for proxy",
+                "options": [
+                    "socks4",
+                    "socks5",
+                    "http"
+                ]
+            },
+            "host": {
+                "nargs": 1,
+                "type": "string",
+                "description": "Host for proyx",
+                "default": null
+            },
+            "port": {
+                "nargs": 1,
+                "type": "integer",
+                "description": "Port on proxy host",
+                "default": null
+            },
+            "credentials": {
+                "username": {
+                    "nargs": 1,
+                    "type": "string",
+                    "description": "Username for authentication",
+                    "default": null
+                },
+                "password": {
+                    "nargs": 1,
+                    "type": "string",
+                    "description": "Password for authentication",
+                    "default": null
+                }
+            }
+        }
+    }
+}

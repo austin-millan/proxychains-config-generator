@@ -1,0 +1,78 @@
+{
+    "chain_type": {
+        "options": {
+            "dynamic_chain": {
+                "type": "string",
+                "description": "@todo"
+            },
+            "strict_chain": {
+                "type": "string",
+                "description": "@todo"
+            },
+            "random_chain": {
+                "type": "string",
+                "description": "@todo"
+            }
+        }
+    },
+    "chain_len": {
+        "type": "integer",
+        "description": "@todo"
+    },
+    "quiet_mode": {
+        "type": "bool",
+        "description": "@todo"
+    },
+    "proxy_dns": {
+        "type": "bool",
+        "description": "@todo"
+    },
+    "remote_dns_subnet": {
+        "type": "integer",
+        "description": "@todo"
+    },
+    "tcp_read_time_out": {
+        "type": "integer",
+        "description": "@todo"
+    },
+    "tcp_connect_time_out": {
+        "type": "integer",
+        "description": "@todo"
+    },
+    "loopback_address_range": {
+        "type": "cidr",
+        "description": "@todo"
+    },
+    "proxy_list": {
+        "description": "@todo",
+        "format": {
+            "protocol": {
+                "type": "string",
+                "description": "@todo",
+                "options": [
+                    "socks4",
+                    "socks5",
+                    "http"
+                ]
+            },
+            "host": {
+                "type": "cidr",
+                "description": "@todo"
+            },
+            "port": {
+                "type": "integer",
+                "description": "@todo"
+            },
+            "credentials": {
+                "username": {
+                    "type": "string",
+                    "description": "@todo"
+                },
+                "password": {
+                    "type": "string",
+                    "description": "@todo"
+                }
+            }
+        }
+    }
+}
