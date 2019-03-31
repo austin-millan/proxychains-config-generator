@@ -49,4 +49,4 @@ optional arguments:
 
 ## Issues
 
-- Fix up `InternalConfiguration.save_config()`
+- Fix up `InternalConfiguration.save_config()` to more closely match the original proxychains config file.
