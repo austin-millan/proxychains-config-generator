@@ -1,6 +1,5 @@
 #! /usr/bin/python3
 
-# Internal
 from argparse import ArgumentParser
 import json
 import os
@@ -17,17 +16,18 @@ class InternalConfiguration:
                 help="Path to store file.",
                 default="config/proxychains_test.conf")
         self.parser.add_argument("-v", "--verbose",
-                dest="verbose", 
+                dest="verbose",
+                action="store_true",
                 help="Whether print status messages to stdout.")
         self.parser.add_argument("-d", "--dry_run",
-                dest="verbose", 
-                help="Dry run will not make any filesystem changes.")
+                dest="dry_run",
+                action="store_true",
+                help="Dry run will not make any filesystem changes.",
+                default=False)
         # proxychains arguments
         self.parse_config_file()
         self.args = vars(self.parser.parse_args())
-        self.save_config(self.args.get("output_path"))  
 
-        
     def __str__(self):
         return self.__dict__      
     
@@ -50,58 +50,105 @@ class InternalConfiguration:
             arg_fields["help"] = v.get("description")
             arg_fields["nargs"] = v.get("nargs")
             arg_fields["default"] = v.get("default")
+            arg_fields["action"] = v.get("action")
             arg_short = v.get("short")
             self.parser.add_argument("-" + arg_short, "--" + k,
                                      **{k: v for k, v in arg_fields.items() if v is not None})
+
+    """
+    Builds configuration in string.
+    
+    Note: "Choices" argument returns a list type.
+    Returns:
+        str
+    """    
+    def create_config_str(self):
+        if self.config is None:
+            raise RuntimeError("Unable to open configuration.")
+        data = ""
+        key = self.args.get("chain_type")
+        if type(key) is list:
+            key = key[0]
+        data += "# {}\n# {}\n{}\n\n".format(
+            self.config.get("chain_type").get("description"),
+            self.config.get("chain_type").get("options").get(key).get("description"),
+            key
+        )
+        key = self.args.get("chain_len")
+        data += "# {}\n{}{} = {}\n\n".format(
+            self.config.get("chain_len").get("description"),
+            "# " if self.args.get("chain_type") is not "random_chain" else "",
+            "chain_len",
+            key
+        )
+        key = self.args.get("quiet_mode")
+        data += "# {}\n{}{}\n\n".format(
+            self.config.get("quiet_mode").get("description"),
+            "# " if not key else "",
+            "quiet_mode"
+        )
+        key = self.args.get("proxy_dns")
+        data += "# {}\n{}\n\n".format(
+            self.config.get("proxy_dns").get("description"),
+            "proxy_dns"
+        )
+        key = self.args.get("remote_dns_subnet")
+        data += "# {}\n{} {}\n\n".format(
+            self.config.get("remote_dns_subnet").get("description"),
+            "remote_dns_subnet",
+            self.args.get("remote_dns_subnet")
+        )
+        key = self.args.get("tcp_read_time_out")
+        data += "# {}\n{} {}\n\n".format(
+            self.config.get("tcp_read_time_out").get("description"),
+            "tcp_read_time_out",
+            self.args.get("tcp_read_time_out")
+        )      
+        key = self.args.get("tcp_connect_time_out")
+        data += "# {}\n{} {}\n\n".format(
+            self.config.get("tcp_connect_time_out").get("description"),
+            "tcp_read_time_out",
+            self.args.get("tcp_connect_time_out")
+        )
+        key = self.args.get("loopback_address_range")
+        data += "# {}\n{}\n\n".format(
+            self.config.get("loopback_address_range").get("description"),
+            "loopback_address_range",
+            self.args.get("loopback_address_range")
+        )
+        key = self.args.get("proxy_list")
+        print(key)
+        print(self.args)
+        data += "# {}\n{}\n\n".format(
+            self.config.get("proxy_list").get("description"),
+            self.args.get("proxy_list")
+        )
+        return data
     
     """
-    Saves config to filepaths.
+    Saves config to filepath.
     """
     def save_config(self, filepath="config/proxychains_test.conf"):
-        # items = list(self.args.keys())
-        #print(items)
-        with open(filepath, "w") as ofile:
-            key = self.args.get("chain_type")
-            ofile.write("# {}\n# {}\n{}\n\n".format(self.config.get("chain_type").get("description"),
-                                        self.config.get("chain_type").get("options").get(key).get("description"),
-                                        key))
-            key = self.args.get("chain_len")
-            ofile.write("# {}\n# {} = {}\n\n".format(self.config.get("chain_len").get("description"),
-                                        "chain_len",
-                                        key))
-            key = self.args.get("quiet_mode")
-            ofile.write("# {}\n{}\n\n".format(self.config.get("quiet_mode").get("description"),
-                                        "quiet_mode"))
-            key = self.args.get("proxy_dns")
-            ofile.write("# {}\n{}\n\n".format(self.config.get("proxy_dns").get("description"),
-                                        "proxy_dns"))
-            key = self.args.get("remote_dns_subnet")
-            ofile.write("# {}\n{} {}\n\n".format(self.config.get("remote_dns_subnet").get("description"),
-                                        "remote_dns_subnet",
-                                        self.args.get("remote_dns_subnet")))       
-            key = self.args.get("tcp_read_time_out")
-            ofile.write("# {}\n{} {}\n\n".format(self.config.get("tcp_read_time_out").get("description"),
-                                        "tcp_read_time_out",
-                                        self.args.get("tcp_read_time_out")))                
-            key = self.args.get("tcp_connect_time_out")
-            ofile.write("# {}\n{} {}\n\n".format(self.config.get("tcp_connect_time_out").get("description"),
-                                        "tcp_read_time_out",
-                                        self.args.get("tcp_connect_time_out")))
-            key = self.args.get("loopback_address_range")            
-            ofile.write("# {}\n{}\n\n".format(self.config.get("loopback_address_range").get("description"),
-                                        "loopback_address_range",
-                                        self.args.get("loopback_address_range")))
-            key = self.args.get("proxy_list")            
-            ofile.write("# {}\n{}\n\n".format(self.config.get("proxy_list").get("description"),
-                                        self.args.get("proxy_list")))
-
+        data = self.create_config_str()
+        if self.args.get("dry_run"):
+            print(data)
+            return
+        try:
+            with open(filepath, "w") as ofile:
+                ofile.write(data)
+        except Exception as e:
+            print("Could not write out to file. Exiting.")
+            sys.exit(1)
 
 def main():
     internal_config_file = os.path.abspath("config/config.json")
-    
-    # load configuration file
-    with open(internal_config_file, "r") as json_file:
-        config = json.load(json_file)
+    try:
+        with open(internal_config_file, "r") as json_file:
+            config = json.load(json_file)
+    except Exception as e:
+        print("Could not open file. Exiting.")
+        sys.exit(1)
     internal_config = InternalConfiguration(config)
+    internal_config.save_config()
     
 main()

@@ -25,13 +25,15 @@
         "nargs": null,
         "type": "integer",
         "description": "Make sense only if random_chain",
-        "default": 2
+        "default": 2,
+        "action": "store_true"
     },
     "quiet_mode": {
         "short": "q",
         "type": "bool",
         "description": "Quiet mode (no output from library)",
-        "default": null
+        "default": false,
+        "action": "store_true"
     },
     "proxy_dns": {
         "short": "p",
@@ -69,8 +71,8 @@
     },
     "proxy_list": {
         "short": "e",
+        "nargs": "*",
         "description": "proxy types: http, socks4, socks5. Defaults to 'tor'",
-        "type": "string",
         "default": "[ProxyList]\nsocks4 127.0.0.1 9050",
         "format": {
             "protocol": {
