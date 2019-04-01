@@ -72,8 +72,9 @@
     "proxy_list": {
         "short": "e",
         "nargs": "*",
+        "action": "append",
         "description": "proxy types: http, socks4, socks5. Defaults to 'tor'",
-        "default": "[ProxyList]\nsocks4 127.0.0.1 9050",
+        "default": ["[ProxyList]\nsocks4 127.0.0.1 9050"],
         "format": {
             "protocol": {
                 "type": "string",

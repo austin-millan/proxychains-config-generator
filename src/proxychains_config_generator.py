@@ -26,6 +26,7 @@ class InternalConfiguration:
                 default=False)
         # proxychains arguments
         self.parse_config_file()
+        #print(self.parser.parse_args())
         self.args = vars(self.parser.parse_args())
 
     def __str__(self):
@@ -34,25 +35,25 @@ class InternalConfiguration:
     def parse_config_file(self):
         for k, v in self.config.items():
             arg_fields = dict(
-                dest = k,
-                action = None,
-                nargs = None,
-                const = None,
-                default = None,
-                type = None,
-                choices = None,
-                required = None,
-                help = None,
-                metavar = None,
-            )         
+                dest=k,
+                action=None,
+                nargs=None,
+                const=None,
+                default=None,
+                type=None,
+                choices=None,
+                required=None,
+                help=None,
+                metavar=None,
+            )
             if "options" in v:
                 arg_fields["choices"] = [x for x in v["options"].keys()]
             arg_fields["help"] = v.get("description")
             arg_fields["nargs"] = v.get("nargs")
             arg_fields["default"] = v.get("default")
             arg_fields["action"] = v.get("action")
-            arg_short = v.get("short")
-            self.parser.add_argument("-" + arg_short, "--" + k,
+            arg_fields["required"] = v.get("required")
+            self.parser.add_argument("-" + v.get("short"), "--" + k,
                                      **{k: v for k, v in arg_fields.items() if v is not None})
 
     """
@@ -117,12 +118,12 @@ class InternalConfiguration:
             self.args.get("loopback_address_range")
         )
         key = self.args.get("proxy_list")
-        print(key)
-        print(self.args)
-        data += "# {}\n{}\n\n".format(
-            self.config.get("proxy_list").get("description"),
-            self.args.get("proxy_list")
-        )
+        proxies = self.args.get("proxy_list")
+        data += "# {}\n".format(self.config.get("proxy_list").get("description"))
+        if len(proxies) > 1:
+            del proxies[0]  # deletes default value
+        for proxy in proxies:
+            data += "{}\n".format(' '.join(proxy))
         return data
     
     """
