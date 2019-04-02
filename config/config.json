@@ -1,99 +1,120 @@
 {
-    "chain_type": {
-        "short": "t",
-        "nargs": 1,
-        "help": "The option below identifies how the ProxyList is treated.",
-        "default": "strict_chain",
-        "options": {
-            "dynamic_chain": {
-                "help": "Each connection will be done via chained proxies"
-            },
-            "strict_chain": {
-                "help": "Each connection will be done via chained proxies"
-            },
-            "random_chain": {
-                "help": "Each connection will be done via random proxy"
-            }
+    "program_args": {
+        "output_path": {
+            "short": "o",
+            "help": "Path to store file.",
+            "default": "config/proxychains_test.conf"
+        },
+        "verbose": {
+            "short": "v",
+            "action": "store_true",
+            "help": "Whether print status messages to stdout.",
+            "default": false
+        },
+        "dry_run": {
+            "short": "d",
+            "action": "store_true",
+            "help": "Dry run will not make any filesystem changes.",
+            "default": false
         }
     },
-    "chain_len": {
-        "short": "l",
-        "nargs": null,
-        "help": "Make sense only if random_chain",
-        "default": 2,
-        "action": "store_true"
-    },
-    "quiet_mode": {
-        "short": "q",
-        "help": "Quiet mode (no output from library)",
-        "default": false,
-        "action": "store_true"
-    },
-    "proxy_dns": {
-        "short": "p",
-        "help": "Proxy DNS requests - no leak for DNS data",
-        "default": true
-    },
-    "remote_dns_subnet": {
-        "short": "r",
-        "nargs": 1,
-        "help": "set the class A subnet number to usefor use of the internal remote DNS mapping",
-        "default": 224
-    },
-    "tcp_read_time_out": {
-        "short": "b",
-        "nargs": 1,
-        "help": "Some timeouts in milliseconds",
-        "default": 15000
-    },
-    "tcp_connect_time_out": {
-        "short": "c",
-        "nargs": 1,
-        "help": "Some timeouts in milliseconds",
-        "default": 8000
-    },
-    "loopback_address_range": {
-        "short": "a",
-        "action": "append",
-        "nargs": "*",
-        "help": "By default enable localnet for loopback address ranges",
-        "default": ["localnet 127.0.0.0/255.0.0.0"]
-    },
-    "proxy_list": {
-        "short": "e",
-        "nargs": "*",
-        "action": "append",
-        "help": "proxy types: http, socks4, socks5. Defaults to 'tor'",
-        "default": ["[ProxyList]\nsocks4 127.0.0.1 9050"],
-        "metavar": {
-            "protocol": {
-                "help": "Protocol for proxy",
-                "nargs": "?",
-                "options": [
-                    "socks4",
-                    "socks5",
-                    "http"
-                ]
-            },
-            "host": {
-                "nargs": 1,
-                "help": "Host for proxy",
-                "default": null
-            },
-            "port": {
-                "nargs": 1,
-                "help": "Port on proxy host",
-                "default": null
-            },
-            "username": {
-                "nargs": 1,
-                "help": "Username for authentication",
-                "default": null
-            },
-            "password": {
-                "nargs": 1,
-                "help": "Password for authentication",
-                "default": null
+    "proxychain_args": {
+        "chain_type": {
+            "short": "t",
+            "nargs": 1,
+            "help": "The option below identifies how the ProxyList is treated.",
+            "default": "strict_chain",
+            "options": {
+                "dynamic_chain": {
+                    "help": "Each connection will be done via chained proxies"
+                },
+                "strict_chain": {
+                    "help": "Each connection will be done via chained proxies"
+                },
+                "random_chain": {
+                    "help": "Each connection will be done via random proxy"
+                }
+            }
+        },
+        "chain_len": {
+            "short": "l",
+            "nargs": null,
+            "help": "Make sense only if random_chain",
+            "default": 2,
+            "action": "store_true"
+        },
+        "quiet_mode": {
+            "short": "q",
+            "help": "Quiet mode (no output from library)",
+            "default": false,
+            "action": "store_true"
+        },
+        "proxy_dns": {
+            "short": "p",
+            "help": "Proxy DNS requests - no leak for DNS data",
+            "default": true
+        },
+        "remote_dns_subnet": {
+            "short": "r",
+            "nargs": 1,
+            "help": "set the class A subnet number to usefor use of the internal remote DNS mapping",
+            "default": 224
+        },
+        "tcp_read_time_out": {
+            "short": "b",
+            "nargs": 1,
+            "help": "Some timeouts in milliseconds",
+            "default": 15000
+        },
+        "tcp_connect_time_out": {
+            "short": "c",
+            "nargs": 1,
+            "help": "Some timeouts in milliseconds",
+            "default": 8000
+        },
+        "loopback_address_range": {
+            "short": "a",
+            "action": "append",
+            "nargs": "*",
+            "help": "By default enable localnet for loopback address ranges",
+            "default": ["localnet 127.0.0.0/255.0.0.0"]
+        },
+        "proxy_list": {
+            "short": "e",
+            "nargs": "*",
+            "action": "append",
+            "help": "proxy types: http, socks4, socks5. Defaults to 'tor'",
+            "default": ["[ProxyList]\nsocks4 127.0.0.1 9050"],
+            "metavar": {
+                "protocol": {
+                    "help": "Protocol for proxy",
+                    "nargs": "?",
+                    "options": [
+                        "socks4",
+                        "socks5",
+                        "http"
+                    ]
+                },
+                "host": {
+                    "nargs": 1,
+                    "help": "Host for proxy",
+                    "default": null
+                },
+                "port": {
+                    "nargs": 1,
+                    "help": "Port on proxy host",
+                    "default": null
+                },
+                "username": {
+                    "nargs": 1,
+                    "help": "Username for authentication",
+                    "default": null
+                },
+                "password": {
+                    "nargs": 1,
+                    "help": "Password for authentication",
+                    "default": null
+                }
             }
         }
     }
