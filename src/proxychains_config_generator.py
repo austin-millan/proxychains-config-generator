@@ -7,29 +7,37 @@ import sys
 
 
 class InternalConfiguration:
-    def __init__(self, config):
+
+    def __init__(self, config_filepath):
+        self.config_filepath = config_filepath
         self.raw_proxychain_args = None
         self.raw_program_args = None
+        self.parsed_args = None
         # parse/validate arguments for program and proxychains
-        self.parser = ArgumentParser("proxychains_config_generator")
-        self.parse_config_file(config)
-        self.parsed_args = vars(self.parser.parse_args())
+        self.parser = ArgumentParser("proxychains-config-generator")
+        self.argparse_arg_fields = ["dest", "action", "nargs",
+                                    "const", "default", "type",
+                                    "choices", "required", "help",
+                                    "metavar"]
 
     def __str__(self):
         return self.__dict__
 
-    def parse_config_file(self, config):
+    """
+    Wrapper for `parse_proxychain_args` and `parse_program_args`,
+    this method ingests the program's `config.json` file and fills 
+    the ArgumentParser with the arguments for proxychain and the program.
+    
+    Simply exits if error.
+    """
+    def load_config_file(self):
 
         def parse_proxychain_args(self):
             if not self.raw_proxychain_args:
                 return None
-            argparse_arg_fields = ["dest", "action", "nargs",
-                                   "const", "default", "type",
-                                   "choices", "required", "help",
-                                   "metavar"]
             for k, v in self.raw_proxychain_args.items():
-                arg_fields = dict((z, None) for z in argparse_arg_fields)
-                for field in argparse_arg_fields:
+                arg_fields = dict((z, None) for z in self.argparse_arg_fields)
+                for field in self.argparse_arg_fields:
                     if field not in v:
                         continue
                     arg_fields[field] = v.get(field)
@@ -44,13 +52,9 @@ class InternalConfiguration:
         def parse_program_args(self):
             if not self.raw_program_args:
                 return None
-            argparse_arg_fields = ["dest", "action", "nargs",
-                                   "const", "default", "type",
-                                   "choices", "required", "help",
-                                   "metavar"]
             for k, v in self.raw_program_args.items():
-                arg_fields = dict((z, None) for z in argparse_arg_fields)
-                for field in argparse_arg_fields:
+                arg_fields = dict((z, None) for z in self.argparse_arg_fields)
+                for field in self.argparse_arg_fields:
                     if field not in v:
                         continue
                     arg_fields[field] = v.get(field)
@@ -58,8 +62,15 @@ class InternalConfiguration:
                                          **{k: v for k, v in arg_fields.items() if v is not None})
             return True
 
-        if not config:
+        if not self.config_filepath:
+            print("Could not open configuration.")
             return None
+        try:
+            with open(self.config_filepath, "r") as json_file:
+                config = json.load(json_file)
+        except Exception as e:
+            print("Could not open configuration file. Exiting.")
+            sys.exit(1)
         self.raw_program_args = config.get("program_args")
         if not parse_program_args(self):
             print("Error parsing program config. Exiting.")
@@ -68,15 +79,12 @@ class InternalConfiguration:
         if not parse_proxychain_args(self):
             print("Error parsing proxychain config. Exiting.")
             sys.exit(1)
+        self.parsed_args = vars(self.parser.parse_args())
 
     """
-    Builds configuration as a string.
-    
-    Note: "Choices" argument returns a list type.
-    Returns:
-        str
+    Returns a string representing the proxychain configuration.
     """
-    def build_proxychain_conf_str(self, config):
+    def build_proxychain_conf_str(self):
         if self.raw_proxychain_args is None:
             raise RuntimeError("Unable to open configuration.")
         data = ""
@@ -163,17 +171,16 @@ class InternalConfiguration:
         return data
 
     """
-    Saves config to filepath.
+    Saves proxychain configuration to filepath.
     """
-
-    def save_config(self, filepath="config/proxychains_test.conf"):
-        data = self.build_proxychain_conf_str(config=self.raw_proxychain_args)
+    def save_config(self):
+        data = self.build_proxychain_conf_str()
         write_out = True
         if self.parsed_args.get("dry_run"):
             print(data)
             write_out = False
-        if os.path.exists(filepath) and write_out is True:
-            user_resp = input("Would you like to override '{0}? (y/n): ".format(filepath))
+        if os.path.exists(self.parsed_args.get("output_path")) and write_out is True:
+            user_resp = input("Would you like to override '{0}? (y/n): ".format(self.parsed_args.output_path))
             if user_resp.lower() == 'yes' or user_resp.lower() == 'y':
                 write_out = True
             elif user_resp.lower() == 'no' or user_resp.lower() == 'n':
@@ -182,7 +189,7 @@ class InternalConfiguration:
                 print("No input, exiting.")
         if write_out is True:
             try:
-                with open(filepath, "w") as ofile:
+                with open(self.parsed_args.output_path, "w") as ofile:
                     ofile.write(data)
             except Exception as e:
                 print("Could not write out to file. Exiting.")
@@ -190,14 +197,9 @@ class InternalConfiguration:
 
 
 def main():
-    internal_config_file = os.path.abspath("config/config.json")
-    try:
-        with open(internal_config_file, "r") as json_file:
-            config = json.load(json_file)
-    except Exception as e:
-        print("Could not open file. Exiting.")
-        sys.exit(1)
-    internal_config = InternalConfiguration(config)
+    internal_config_path = os.path.abspath("config/config.json")
+    internal_config = InternalConfiguration(internal_config_path)
+    internal_config.load_config_file()
     internal_config.save_config()
 
 

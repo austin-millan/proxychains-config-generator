@@ -3,7 +3,7 @@
         "output_path": {
             "short": "o",
             "help": "Path to store file.",
-            "default": "config/proxychains_test.conf"
+            "default": "config/proxychains.conf"
         },
         "verbose": {
             "short": "v",
