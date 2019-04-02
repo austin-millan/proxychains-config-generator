@@ -168,15 +168,25 @@ class InternalConfiguration:
 
     def save_config(self, filepath="config/proxychains_test.conf"):
         data = self.build_proxychain_conf_str(config=self.raw_proxychain_args)
+        write_out = True
         if self.parsed_args.get("dry_run"):
             print(data)
-            return
-        try:
-            with open(filepath, "w") as ofile:
-                ofile.write(data)
-        except Exception as e:
-            print("Could not write out to file. Exiting.")
-            sys.exit(1)
+            write_out = False
+        if os.path.exists(filepath) and write_out is True:
+            user_resp = input("Would you like to override '{0}? (y/n): ".format(filepath))
+            if user_resp.lower() == 'yes' or user_resp.lower() == 'y':
+                write_out = True
+            elif user_resp.lower() == 'no' or user_resp.lower() == 'n':
+                write_out = False
+            else:
+                print("No input, exiting.")
+        if write_out is True:
+            try:
+                with open(filepath, "w") as ofile:
+                    ofile.write(data)
+            except Exception as e:
+                print("Could not write out to file. Exiting.")
+                sys.exit(1)
 
 
 def main():
